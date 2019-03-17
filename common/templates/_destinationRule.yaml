@@ -1,0 +1,21 @@
+{{- define "common.destinationRule" -}}
+{{- $common := dict "Values" .Values.common -}} 
+{{- $noCommon := omit .Values "common" -}} 
+{{- $overrides := dict "Values" $noCommon -}} 
+{{- $noValues := omit . "Values" -}} 
+{{- with merge $noValues $overrides $common -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "common.name" . }}-{{ .Values.image.tag }}
+  labels:
+    helm.sh/chart: {{ include "common.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  host: {{ include "common.name" . }}
+  subsets: 
+  - name: {{ .Values.image.tag }}
+    labels:
+     version: {{ .Values.image.tag }} 
+{{- end -}}
+{{- end -}}

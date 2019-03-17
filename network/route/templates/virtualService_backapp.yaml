@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ .Values.backapp.name }}
+  labels:
+    helm.sh/chart: {{ include "common.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  hosts:
+    - {{ .Values.backapp.istio.hosts | quote	}}
+{{- if .Values.backapp.istio.gateway }}
+  gateways:
+    - {{ .Values.backapp.istio.gateway }}
+{{ end }} 
+  http:
+  - route:
+    - destination:
+        port:
+          number: {{ .Values.backapp.service.port }}
+        host:  {{ .Values.backapp.name }}
+        subset: {{ .Values.backapp.image.tag }}
+      weight: {{ .Values.backapp.istio.ReleaseWeight }}
+    - destination:
+        port:
+          number: {{ .Values.backapp.service.port }}
+        host: {{ .Values.backapp.name }}
+        subset: {{ .Values.carnary.backapp.image.tag }}
+      weight: {{ .Values.carnary.backapp.istio.ReleaseWeight }}

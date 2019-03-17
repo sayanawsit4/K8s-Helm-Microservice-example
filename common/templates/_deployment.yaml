@@ -1,0 +1,51 @@
+{{- define "common.deployment" -}}
+{{- $common := dict "Values" .Values.common -}} 
+{{- $noCommon := omit .Values "common" -}} 
+{{- $overrides := dict "Values" $noCommon -}} 
+{{- $noValues := omit . "Values" -}} 
+{{- with merge $noValues $overrides $common -}}
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "common.name" . }}-{{ .Values.image.tag }}
+  labels:
+    helm.sh/chart: {{ include "common.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: {{ include "common.name" . }}  
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "common.name" . }}
+      version: {{ .Values.image.tag }} 
+  template:
+    metadata:
+      labels:
+        app: {{ include "common.name" . }}
+        version: {{ .Values.image.tag }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}/{{ template "common.name" . }}:{{ .Values.image.tag }}"
+          resources:
+            requests:
+              cpu: {{ .Values.hpa.cpu }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.deployment.containerPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            failureThreshold: 2
+            periodSeconds: 5
+            initialDelaySeconds: 60
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "curl localhost:80/health -XDELETE && sleep 25"]    
+{{- end -}}
+{{- end -}}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

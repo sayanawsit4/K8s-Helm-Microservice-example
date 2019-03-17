@@ -1,0 +1,9 @@
+{{- define "common.metadata" -}}
+metadata:
+  name: {{ include "common.name" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "common.name" . }}
+    helm.sh/chart: {{ include "common.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}

@@ -1,0 +1,24 @@
+{{- define "common.gateway" -}}
+{{- $common := dict "Values" .Values.common -}} 
+{{- $noCommon := omit .Values "common" -}} 
+{{- $overrides := dict "Values" $noCommon -}} 
+{{- $noValues := omit . "Values" -}} 
+{{- with merge $noValues $overrides $common -}}
+ {{- if .Values.istio.gtenabled }}  
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ .Values.istio.gateway }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: {{ .Values.service.port }}
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+{{- end -}}    
+{{- end -}}
+{{- end -}}    

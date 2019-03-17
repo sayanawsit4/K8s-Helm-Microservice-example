@@ -1,0 +1,23 @@
+{{- define "common.service" -}}
+{{- $common := dict "Values" .Values.common -}} 
+{{- $noCommon := omit .Values "common" -}} 
+{{- $overrides := dict "Values" $noCommon -}} 
+{{- $noValues := omit . "Values" -}} 
+{{- with merge $noValues $overrides $common -}}
+{{- if not .Values.istio.carnary }} 
+apiVersion: v1
+kind: Service
+{{ template "common.metadata" . }}
+    app: {{ include "common.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ include "common.name" . }}
+{{- end -}}    
+{{- end -}}
+{{- end -}} 

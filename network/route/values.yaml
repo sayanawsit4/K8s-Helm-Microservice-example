@@ -1,0 +1,32 @@
+myapp:
+  name: myapp
+  image:
+    tag: v1
+  istio:
+      hosts: "*"
+      gateway: app-gateway
+      ReleaseWeight: 100
+  service: 
+      port: 80  
+
+backapp:
+  name: backapp
+  image:
+    tag: v1
+  istio:
+      hosts: "backapp"
+      ReleaseWeight: 100
+  service: 
+      port: 80
+
+carnary:
+  myapp:
+    image:
+      tag: v2
+    istio:  
+     ReleaseWeight: 0
+  backapp:
+    image:
+      tag: v2
+    istio:  
+     ReleaseWeight: 0

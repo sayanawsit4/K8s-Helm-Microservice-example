@@ -1,0 +1,38 @@
+{{- define "common.virtualService" -}}
+{{- $common := dict "Values" .Values.common -}} 
+{{- $noCommon := omit .Values "common" -}} 
+{{- $overrides := dict "Values" $noCommon -}} 
+{{- $noValues := omit . "Values" -}} 
+{{- with merge $noValues $overrides $common -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "common.name" . }}
+  labels:
+    helm.sh/chart: {{ include "common.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  hosts:
+    - {{ .Values.istio.hosts | quote	}}
+{{- if .Values.istio.gateway }}
+  gateways:
+    - {{ .Values.istio.gateway }}
+{{ end }} 
+  http:
+  - route:
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: {{ include "common.name" . }}
+        subset: {{ .Values.image.tag }}
+      weight: {{ .Values.istio.ReleaseWeight }}
+  {{- if  .Values.istio.carnary }}     
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: {{ include "common.name" . }}
+        subset: {{ .Values.image.tag }}
+      weight: {{ .Values.istio.ReleaseWeight }}  
+  {{- end -}}     
+{{- end -}} 
+{{- end -}}

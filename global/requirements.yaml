@@ -1,0 +1,9 @@
+dependencies:
+  - name: myapp
+    version: 0.1.0
+    repository: file://../frontend/myapp
+    enabled: true
+  - name: backapp
+    version: 0.1.0
+    repository: file://../backend/backapp
+    enabled: true 

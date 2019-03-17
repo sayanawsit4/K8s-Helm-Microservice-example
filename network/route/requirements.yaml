@@ -1,0 +1,17 @@
+dependencies:
+  - name: common
+    version: 0.1.0
+    repository: file://../../common
+    enabled: false  
+#   - name: myapp
+#     version: 0.1.0
+#     repository: file://../../frontend/myapp
+#     enabled: false
+#   - name: backapp
+#     version: 0.1.0
+#     repository: file://../../backend/backapp
+#     enabled: false  
+#   - name: helm-chart
+#     version: 0.1.0
+#     repository: file://../../helm-chart
+#     enabled: false    

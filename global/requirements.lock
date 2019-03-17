@@ -1,0 +1,9 @@
+dependencies:
+- name: myapp
+  repository: file://../frontend/myapp
+  version: 0.1.0
+- name: backapp
+  repository: file://../backend/backapp
+  version: 0.1.0
+digest: sha256:75aeb225ac875d3c6bb3ac5f88e5c563278298982eda90e0c3586e77c849af8b
+generated: 2019-02-25T12:28:50.1403228+05:30

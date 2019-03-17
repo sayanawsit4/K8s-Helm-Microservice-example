@@ -1,0 +1,32 @@
+myapp:
+  name: myapp
+  image:
+    tag: v1
+  istio:
+    carnary: false
+    hosts: "*"  
+    gateway: app-gateway
+  service:
+    type: ClusterIP
+    port: 80
+  hpa:
+    targetAverageUtilization: 50
+    minReplicas: 1
+    maxReplicas: 3
+    cpu: 100m
+    
+backapp:
+  name: backapp
+  image:
+    tag: v1
+  istio:
+    hosts: "backapp"
+    carnary: false
+  service:
+    type: ClusterIP
+    port: 80
+  hpa:
+    targetAverageUtilization: 50
+    minReplicas: 1
+    maxReplicas: 3
+    cpu: 100m
